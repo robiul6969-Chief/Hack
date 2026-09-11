@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>UNKNOWN SYSTEM</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
+
+:root{
+    --green:#50ffb1;
+    --green-dark:#0a9b62;
+    --red:#ff244f;
+    --bg:#010403;
+    --panel:rgba(3,20,14,.88);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    color:var(--green);
+    font-family:'Orbitron',sans-serif;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.grid{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.6;
+
+    background-image:
+        linear-gradient(rgba(80,255,177,.07) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(80,255,177,.07) 1px,transparent 1px);
+
+    background-size:40px 40px;
+
+    animation:gridMove 12s linear infinite;
+}
+
+@keyframes gridMove{
+    from{
+        background-position:0 0;
+    }
+    to{
+        background-position:40px 40px;
+    }
+}
+
+.scanlines{
+    position:fixed;
+    inset:0;
+    z-index:500;
+    pointer-events:none;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 3px,
+            rgba(80,255,177,.025) 4px
+        );
+}
+
+.scanline{
+    position:fixed;
+    left:0;
+    width:100%;
+    height:2px;
+    z-index:400;
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--green),
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px var(--green),
+        0 0 30px var(--green);
+
+    animation:scan 5s linear infinite;
+}
+
+@keyframes scan{
+    from{top:0}
+    to{top:100%}
+}
+
+/* =========================
+   FIRST SCREEN
+========================= */
+
+#permissionScreen{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+        radial-gradient(circle at center,
+        rgba(0,80,45,.16),
+        transparent 40%),
+        #000;
+}
+
+.permission-box{
+    width:min(620px,88vw);
+    min-height:330px;
+
+    border:1px solid rgba(80,255,177,.7);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(3,25,17,.95),
+            rgba(0,5,3,.98)
+        );
+
+    box-shadow:
+        0 0 40px rgba(80,255,177,.12),
+        inset 0 0 50px rgba(80,255,177,.04);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    position:relative;
+    overflow:hidden;
+
+    padding:30px;
+}
+
+.permission-box::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:2px;
+
+    background:var(--green);
+
+    box-shadow:0 0 20px var(--green);
+}
+
+.permission-icon{
+    font-size:55px;
+    margin-bottom:20px;
+
+    animation:iconPulse 1.5s infinite;
+}
+
+@keyframes iconPulse{
+    50%{
+        transform:scale(1.1);
+        filter:brightness(1.5);
+    }
+}
+
+.permission-title{
+    font-size:clamp(26px,6vw,55px);
+    font-weight:900;
+    letter-spacing:5px;
+    text-align:center;
+
+    text-shadow:
+        0 0 20px var(--green);
+}
+
+.permission-text{
+    margin-top:18px;
+    font-family:'Share Tech Mono',monospace;
+    text-align:center;
+    color:#9be8c5;
+    line-height:1.7;
+    font-size:14px;
+}
+
+.button-area{
+    position:relative;
+    margin-top:35px;
+
+    width:min(430px,100%);
+    height:65px;
+
+    display:flex;
+    justify-content:center;
+    gap:25px;
+}
+
+.choice-btn{
+    width:150px;
+    height:52px;
+
+    border:1px solid var(--green);
+
+    background:rgba(80,255,177,.06);
+
+    color:var(--green);
+
+    font-family:'Orbitron',sans-serif;
+    font-weight:800;
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    position:absolute;
+}
+
+.choice-btn:hover{
+    background:var(--green);
+    color:#000;
+    box-shadow:0 0 25px var(--green);
+}
+
+#yesBtn{
+    left:25px;
+}
+
+#noBtn{
+    right:25px;
+    border-color:#ff5b73;
+    color:#ff7890;
+}
+
+#noBtn:hover{
+    background:#ff244f;
+    color:#fff;
+}
+
+/* =========================
+   BOOT SCREEN
+========================= */
+
+#boot{
+    position:fixed;
+    inset:0;
+    z-index:9000;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    background:#000;
+}
+
+.boot-ring{
+    width:150px;
+    height:150px;
+
+    border-radius:50%;
+
+    border:7px solid rgba(80,255,177,.12);
+    border-top-color:var(--green);
+    border-right-color:var(--green);
+
+    animation:spin 1.2s linear infinite;
+
+    box-shadow:
+        0 0 30px rgba(80,255,177,.2);
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+.boot-title{
+    margin-top:35px;
+
+    font-size:clamp(24px,5vw,58px);
+    font-weight:900;
+    letter-spacing:5px;
+
+    text-shadow:
+        0 0 20px var(--green),
+        0 0 50px rgba(80,255,177,.4);
+}
+
+.boot-message{
+    margin-top:18px;
+
+    font-family:'Share Tech Mono',monospace;
+    letter-spacing:3px;
+    text-align:center;
+
+    color:#8eecc2;
+}
+
+.progress-box{
+    width:min(450px,82vw);
+    height:14px;
+
+    border:1px solid var(--green);
+
+    margin-top:30px;
+    padding:3px;
+}
+
+.progress{
+    width:0%;
+    height:100%;
+
+    background:
+        repeating-linear-gradient(
+            135deg,
+            var(--green) 0 12px,
+            var(--green-dark) 12px 24px
+        );
+
+    box-shadow:0 0 20px var(--green);
+
+    transition:width .15s;
+}
+
+.percent{
+    margin-top:12px;
+
+    font-family:'Share Tech Mono';
+    color:#9effd0;
+}
+
+/* =========================
+   MAIN APP
+========================= */
+
+#app{
+    position:relative;
+    z-index:10;
+
+    width:100%;
+    height:100%;
+
+    padding:20px;
+
+    opacity:0;
+
+    transition:1s ease;
+}
+
+.topbar{
+    height:60px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border-bottom:
+        1px solid rgba(80,255,177,.3);
+}
+
+.logo{
+    font-size:clamp(14px,2vw,24px);
+    font-weight:900;
+    letter-spacing:3px;
+}
+
+.logo span{
+    color:#b3ffe0;
+}
+
+.status{
+    font-family:'Share Tech Mono';
+    font-size:12px;
+}
+
+.dot-status{
+    display:inline-block;
+
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    background:var(--green);
+
+    margin-right:7px;
+
+    box-shadow:0 0 15px var(--green);
+
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    50%{
+        opacity:.3;
+        transform:scale(.6);
+    }
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard{
+    height:calc(100% - 75px);
+
+    padding-top:15px;
+
+    display:grid;
+
+    grid-template-columns:1.1fr .9fr;
+    grid-template-rows:1fr 1fr;
+
+    gap:15px;
+}
+
+.panel{
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(4,32,22,.88),
+            rgba(0,7,4,.95)
+        );
+
+    border:
+        1px solid rgba(80,255,177,.5);
+
+    box-shadow:
+        inset 0 0 40px rgba(80,255,177,.03),
+        0 0 25px rgba(0,0,0,.7);
+}
+
+.panel::before{
+    content:"";
+
+    position:absolute;
+    top:-1px;
+    left:-1px;
+
+    width:35px;
+    height:35px;
+
+    border-top:4px solid var(--green);
+    border-left:4px solid var(--green);
+}
+
+.panel::after{
+    content:"";
+
+    position:absolute;
+    bottom:-1px;
+    right:-1px;
+
+    width:35px;
+    height:35px;
+
+    border-bottom:4px solid var(--green);
+    border-right:4px solid var(--green);
+}
+
+.panel-header{
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    border-bottom:
+        1px solid rgba(80,255,177,.16);
+}
+
+.panel-title{
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+.controls span{
+    display:inline-block;
+
+    width:10px;
+    height:10px;
+
+    border:1px solid var(--green);
+
+    margin-left:5px;
+}
+
+/* =========================
+   TERMINAL
+========================= */
+
+.terminal{
+    grid-row:span 2;
+}
+
+.terminal-content{
+    height:calc(100% - 48px);
+
+    padding:20px;
+
+    overflow:hidden;
+
+    font-family:'Share Tech Mono';
+    font-size:13px;
+    line-height:1.8;
+
+    color:#76e3b4;
+}
+
+.terminal-line{
+    animation:fadeLine .25s forwards;
+}
+
+@keyframes fadeLine{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+.red-text{
+    color:#ff6d85;
+}
+
+/* =========================
+   RADAR
+========================= */
+
+.radar-panel{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.radar{
+    width:min(280px,75%);
+    aspect-ratio:1;
+
+    border-radius:50%;
+
+    position:relative;
+
+    border:
+        3px solid rgba(80,255,177,.7);
+
+    background:
+        radial-gradient(circle,
+        transparent 24%,
+        rgba(80,255,177,.12) 25%,
+        transparent 26%,
+        transparent 48%,
+        rgba(80,255,177,.12) 49%,
+        transparent 50%);
+}
+
+.radar::before{
+    content:"";
+
+    position:absolute;
+    top:50%;
+    left:0;
+
+    width:100%;
+    height:1px;
+
+    background:rgba(80,255,177,.3);
+}
+
+.radar::after{
+    content:"";
+
+    position:absolute;
+    left:50%;
+    top:0;
+
+    height:100%;
+    width:1px;
+
+    background:rgba(80,255,177,.3);
+}
+
+.radar-sweep{
+    position:absolute;
+    inset:0;
+
+    border-radius:50%;
+
+    background:
+        conic-gradient(
+            rgba(80,255,177,.5),
+            transparent 50deg,
+            transparent 360deg
+        );
+
+    animation:radarSpin 3s linear infinite;
+}
+
+@keyframes radarSpin{
+    to{transform:rotate(360deg)}
+}
+
+.radar-dot{
+    position:absolute;
+
+    width:8px;
+    height:8px;
+
+    background:var(--green);
+
+    border-radius:50%;
+
+    box-shadow:0 0 15px var(--green);
+}
+
+.r1{top:25%;left:65%}
+.r2{top:68%;left:32%;animation:pulse 1s infinite}
+.r3{top:48%;left:78%;animation:pulse 1.6s infinite}
+
+/* =========================
+   ANALYTICS
+========================= */
+
+.analytics{
+    padding:18px;
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+
+    gap:12px;
+}
+
+.circle{
+    width:100px;
+    aspect-ratio:1;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    background:
+        radial-gradient(
+            closest-side,
+            #06160f 70%,
+            transparent 71%
+        ),
+        conic-gradient(
+            var(--green) var(--value),
+            rgba(80,255,177,.1) 0
+        );
+}
+
+.circle strong{
+    font-size:18px;
+}
+
+.circle small{
+    margin-top:4px;
+    font-size:8px;
+    color:#8be6bd;
+}
+
+.graph{
+    position:absolute;
+
+    bottom:15px;
+    left:20px;
+    right:20px;
+
+    height:70px;
+
+    display:flex;
+    align-items:end;
+    gap:8px;
+}
+
+.bar{
+    flex:1;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(7,90,55,.3),
+            var(--green)
+        );
+
+    animation:bars 1.7s infinite alternate;
+}
+
+.bar:nth-child(1){height:35%}
+.bar:nth-child(2){height:70%;animation-delay:.2s}
+.bar:nth-child(3){height:45%;animation-delay:.4s}
+.bar:nth-child(4){height:90%;animation-delay:.6s}
+.bar:nth-child(5){height:60%;animation-delay:.8s}
+.bar:nth-child(6){height:80%;animation-delay:1s}
+.bar:nth-child(7){height:55%;animation-delay:1.2s}
+
+@keyframes bars{
+    from{
+        transform:scaleY(.55);
+        transform-origin:bottom;
+    }
+    to{
+        transform:scaleY(1);
+    }
+}
+
+/* =========================
+   ALERT
+========================= */
+
+#alert{
+    position:fixed;
+    inset:0;
+
+    z-index:800;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,0,40,.14),
+            rgba(0,0,0,.96) 65%
+        );
+}
+
+.alert-flash{
+    position:absolute;
+    inset:0;
+
+    background:rgba(255,0,35,.12);
+
+    animation:redFlash .35s infinite;
+}
+
+@keyframes redFlash{
+    50%{
+        opacity:.05;
+    }
+}
+
+.alert-box{
+    position:relative;
+    z-index:2;
+
+    width:min(700px,88vw);
+
+    padding:45px 25px;
+
+    text-align:center;
+
+    border:
+        2px solid var(--red);
+
+    background:
+        rgba(20,0,4,.92);
+
+    box-shadow:
+        0 0 30px rgba(255,0,50,.5),
+        inset 0 0 50px rgba(255,0,50,.08);
+
+    animation:alertShake .12s infinite;
+}
+
+@keyframes alertShake{
+    0%,100%{
+        transform:translate(0);
+    }
+
+    25%{
+        transform:translate(-2px,1px);
+    }
+
+    75%{
+        transform:translate(2px,-1px);
+    }
+}
+
+.alert-symbol{
+    font-size:60px;
+
+    color:var(--red);
+
+    text-shadow:
+        0 0 25px var(--red);
+}
+
+.alert-title{
+    margin-top:15px;
+
+    color:var(--red);
+
+    font-size:clamp(24px,6vw,58px);
+
+    font-weight:900;
+
+    letter-spacing:5px;
+
+    text-shadow:
+        0 0 25px rgba(255,36,79,.8);
+}
+
+.alert-sub{
+    margin-top:20px;
+
+    font-family:'Share Tech Mono';
+
+    color:#ffabb9;
+
+    line-height:1.8;
+
+    letter-spacing:1px;
+}
+
+.alert-loading{
+    margin:25px auto 0;
+
+    width:min(400px,80%);
+
+    height:8px;
+
+    border:1px solid var(--red);
+
+    overflow:hidden;
+}
+
+.alert-loading div{
+    width:100%;
+    height:100%;
+
+    background:var(--red);
+
+    transform-origin:left;
+
+    animation:alertLoad 1.5s linear infinite;
+
+    box-shadow:0 0 20px var(--red);
+}
+
+@keyframes alertLoad{
+    from{
+        transform:scaleX(0);
+    }
+    to{
+        transform:scaleX(1);
+    }
+}
+
+/* =========================
+   GLITCH
+========================= */
+
+.glitch{
+    animation:glitch .2s;
+}
+
+@keyframes glitch{
+    0%{transform:translate(0)}
+    20%{transform:translate(-4px,2px)}
+    40%{transform:translate(4px,-2px)}
+    60%{transform:translate(-2px,1px)}
+    80%{transform:translate(2px,-1px)}
+    100%{transform:translate(0)}
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    position:fixed;
+    bottom:7px;
+    right:12px;
+
+    z-index:100;
+
+    font-family:'Share Tech Mono';
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:rgba(80,255,177,.4);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    #app{
+        padding:10px;
+    }
+
+    .topbar{
+        height:50px;
+    }
+
+    .status{
+        font-size:8px;
+    }
+
+    .dashboard{
+        grid-template-columns:1fr;
+        grid-template-rows:1.2fr .8fr .8fr;
+        gap:10px;
+        padding-top:10px;
+    }
+
+    .terminal{
+        grid-row:auto;
+    }
+
+    .terminal-content{
+        padding:12px;
+        font-size:9px;
+    }
+
+    .panel-header{
+        height:40px;
+        padding:0 12px;
+    }
+
+    .panel-title{
+        font-size:9px;
+    }
+
+    .radar{
+        width:180px;
+    }
+
+    .circle{
+        width:70px;
+    }
+
+    .circle strong{
+        font-size:13px;
+    }
+
+    .graph{
+        height:45px;
+    }
+
+    .button-area{
+        gap:0;
+    }
+
+    .choice-btn{
+        width:120px;
+    }
+
+    #yesBtn{
+        left:10px;
+    }
+
+    #noBtn{
+        right:10px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="grid"></div>
+<div class="scanlines"></div>
+<div class="scanline"></div>
+
+<!-- =========================
+     CONFIRMATION SCREEN
+========================= -->
+
+<div id="permissionScreen">
+
+    <div class="permission-box">
+
+        <div class="permission-icon">⚠</div>
+
+        <div class="permission-title">
+            ARE YOU SURE?
+        </div>
+
+        <div class="permission-text">
+            AN UNKNOWN DIGITAL ENVIRONMENT IS READY.<br>
+            CONTINUE AT YOUR OWN RISK.
+        </div>
+
+        <div class="button-area">
+
+            <button
+                class="choice-btn"
+                id="yesBtn">
+                YES
+            </button>
+
+            <button
+                class="choice-btn"
+                id="noBtn">
+                NO
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     BOOT
+========================= -->
+
+<div id="boot">
+
+    <div class="boot-ring"></div>
+
+    <div class="boot-title">
+        INITIALIZING
+    </div>
+
+    <div
+        class="boot-message"
+        id="bootMessage">
+        PREPARING SYSTEM...
+    </div>
+
+    <div class="progress-box">
+        <div
+            class="progress"
+            id="progress">
+        </div>
+    </div>
+
+    <div
+        class="percent"
+        id="percent">
+        0%
+    </div>
+
+</div>
+
+<!-- =========================
+     MAIN APP
+========================= -->
+
+<div id="app">
+
+    <div class="topbar">
+
+        <div class="logo">
+            ◈ UNKNOWN<span>_SYSTEM</span>
+        </div>
+
+        <div class="status">
+            <span class="dot-status"></span>
+            SYSTEM ACTIVE
+        </div>
+
+    </div>
+
+    <div class="dashboard">
+
+        <!-- TERMINAL -->
+
+        <div class="panel terminal">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    SYSTEM TERMINAL
+                </div>
+
+                <div class="controls">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+            </div>
+
+            <div
+                class="terminal-content"
+                id="terminal">
+            </div>
+
+        </div>
+
+        <!-- RADAR -->
+
+        <div class="panel radar-panel">
+
+            <div class="radar">
+
+                <div class="radar-sweep"></div>
+
+                <div class="radar-dot r1"></div>
+                <div class="radar-dot r2"></div>
+                <div class="radar-dot r3"></div>
+
+            </div>
+
+        </div>
+
+        <!-- ANALYTICS -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    LIVE ANALYTICS
+                </div>
+
+                <div class="controls">
+                    <span></span>
+                    <span></span>
+                </div>
+
+            </div>
+
+            <div class="analytics">
+
+                <div
+                    class="circle"
+                    style="--value:76%">
+                    <strong id="n1">76%</strong>
+                    <small>CORE</small>
+                </div>
+
+                <div
+                    class="circle"
+                    style="--value:54%">
+                    <strong id="n2">54%</strong>
+                    <small>DATA</small>
+                </div>
+
+                <div
+                    class="circle"
+                    style="--value:91%">
+                    <strong id="n3">91%</strong>
+                    <small>SYNC</small>
+                </div>
+
+            </div>
+
+            <div class="graph">
+
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     ALERT
+========================= -->
+
+<div id="alert">
+
+    <div class="alert-flash"></div>
+
+    <div class="alert-box">
+
+        <div class="alert-symbol">
+            ⚠
+        </div>
+
+        <div class="alert-title">
+            SYSTEM ANOMALY
+        </div>
+
+        <div class="alert-sub">
+
+            UNKNOWN SIGNAL DETECTED<br>
+
+            ANALYZING UNSTABLE DATA STREAM...<br>
+
+            PLEASE WAIT...
+
+        </div>
+
+        <div class="alert-loading">
+            <div></div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="footer">
+    VISUAL SIMULATION • UNKNOWN SYSTEM
+</div>
+
+<script>
+
+/* =========================
+   NO BUTTON ESCAPE
+========================= */
+
+const noBtn = document.getElementById("noBtn");
+const buttonArea = document.querySelector(".button-area");
+
+function moveNoButton(){
+
+    const areaRect =
+        buttonArea.getBoundingClientRect();
+
+    const btnWidth =
+        noBtn.offsetWidth;
+
+    const btnHeight =
+        noBtn.offsetHeight;
+
+    const maxX =
+        areaRect.width - btnWidth;
+
+    const maxY =
+        areaRect.height - btnHeight;
+
+    const randomX =
+        Math.random() * maxX;
+
+    const randomY =
+        Math.random() * Math.max(0,maxY);
+
+    noBtn.style.left =
+        randomX + "px";
+
+    noBtn.style.top =
+        randomY + "px";
+
+    noBtn.style.right =
+        "auto";
+}
+
+/* Mouse + touch */
+
+noBtn.addEventListener(
+    "mouseenter",
+    moveNoButton
+);
+
+noBtn.addEventListener(
+    "touchstart",
+    function(e){
+
+        e.preventDefault();
+
+        moveNoButton();
+
+    }
+);
+
+noBtn.addEventListener(
+    "click",
+    moveNoButton
+);
+
+
+/* =========================
+   YES BUTTON
+========================= */
+
+document
+.getElementById("yesBtn")
+.addEventListener("click",()=>{
+
+    /* vibration if supported */
+
+    if(navigator.vibrate){
+
+        navigator.vibrate([
+            120,
+            60,
+            120,
+            60,
+            250
+        ]);
+
+    }
+
+    const permission =
+        document.getElementById(
+            "permissionScreen"
+        );
+
+    permission.style.opacity="0";
+
+    setTimeout(()=>{
+
+        permission.style.display="none";
+
+        startBoot();
+
+    },600);
+
+});
+
+
+/* =========================
+   BOOT SYSTEM
+========================= */
+
+function startBoot(){
+
+    const boot =
+        document.getElementById("boot");
+
+    boot.style.display="flex";
+
+    let value=0;
+
+    const progress =
+        document.getElementById("progress");
+
+    const percent =
+        document.getElementById("percent");
+
+    const message =
+        document.getElementById("bootMessage");
+
+    const messages=[
+
+        "ESTABLISHING ENVIRONMENT...",
+
+        "LOADING SYSTEM MODULES...",
+
+        "SYNCHRONIZING DATA STREAMS...",
+
+        "ACTIVATING VISUAL CORE...",
+
+        "SCANNING DIGITAL ENVIRONMENT...",
+
+        "SYSTEM READY..."
+
+    ];
+
+    const timer=setInterval(()=>{
+
+        value +=
+            Math.floor(
+                Math.random()*4
+            )+1;
+
+        if(value>100) value=100;
+
+        progress.style.width=
+            value+"%";
+
+        percent.textContent=
+            value+"%";
+
+        const index=
+            Math.min(
+                5,
+                Math.floor(value/18)
+            );
+
+        message.textContent=
+            messages[index];
+
+        if(value>=100){
+
+            clearInterval(timer);
+
+            setTimeout(()=>{
+
+                boot.style.opacity="0";
+
+                setTimeout(()=>{
+
+                    boot.style.display="none";
+
+                    document
+                    .getElementById("app")
+                    .style.opacity="1";
+
+                    startTerminal();
+
+                    setTimeout(showAlert,5500);
+
+                },700);
+
+            },500);
+
+        }
+
+    },120);
+
+}
+
+
+/* =========================
+   TERMINAL
+========================= */
+
+const terminalLines=[
+
+    "[ SYSTEM ] Initialization complete",
+
+    "[ OK ] Environment loaded",
+
+    "[ OK ] Visual interface active",
+
+    "[ DATA ] Synchronizing streams...",
+
+    "[ CORE ] Signal processing enabled",
+
+    "[ NET ] Connection simulation stable",
+
+    "[ SCAN ] Environment analysis active",
+
+    "[ INFO ] Unknown patterns detected",
+
+    "[ SYS ] Monitoring system activity",
+
+    "[ OK ] Interface ready",
+
+    "",
+
+    "> STATUS: ACTIVE",
+
+    "> WAITING FOR SIGNAL..."
+
+];
+
+let lineIndex=0;
+
+function startTerminal(){
+
+    const terminal=
+        document.getElementById("terminal");
+
+    function addLine(){
+
+        if(lineIndex < terminalLines.length){
+
+            const div=
+                document.createElement("div");
+
+            div.className="terminal-line";
+
+            div.textContent=
+                terminalLines[lineIndex];
+
+            terminal.appendChild(div);
+
+            lineIndex++;
+
+            setTimeout(addLine,260);
+
+        }else{
+
+            startLiveTerminal();
+
+        }
+
+    }
+
+    addLine();
+
+}
+
+function startLiveTerminal(){
+
+    const terminal=
+        document.getElementById("terminal");
+
+    const liveLines=[
+
+        "[ DATA ] Stream refreshed",
+
+        "[ SYS ] Cycle completed",
+
+        "[ SCAN ] New signal pattern",
+
+        "[ CORE ] Processing data",
+
+        "[ NET ] Channel stable",
+
+        "[ INFO ] Monitoring environment",
+
+        "[ SIGNAL ] Activity detected"
+
+    ];
+
+    setInterval(()=>{
+
+        const div=
+            document.createElement("div");
+
+        div.className="terminal-line";
+
+        div.textContent=
+            liveLines[
+                Math.floor(
+                    Math.random()*
+                    liveLines.length
+                )
+            ];
+
+        terminal.appendChild(div);
+
+        if(terminal.children.length>23){
+
+            terminal.removeChild(
+                terminal.children[0]
+            );
+
+        }
+
+    },1500);
+
+}
+
+
+/* =========================
+   LIVE NUMBERS
+========================= */
+
+const ids=["n1","n2","n3"];
+
+setInterval(()=>{
+
+    ids.forEach(id=>{
+
+        const el=
+            document.getElementById(id);
+
+        let current=
+            parseInt(el.textContent);
+
+        let change=
+            Math.floor(
+                Math.random()*9
+            )-4;
+
+        let value=
+            Math.max(
+                20,
+                Math.min(
+                    99,
+                    current+change
+                )
+            );
+
+        el.textContent=
+            value+"%";
+
+    });
+
+},2200);
+
+
+/* =========================
+   GLITCH
+========================= */
+
+setInterval(()=>{
+
+    document.body.classList
+        .add("glitch");
+
+    setTimeout(()=>{
+
+        document.body.classList
+            .remove("glitch");
+
+    },220);
+
+},6500);
+
+
+/* =========================
+   ALERT
+========================= */
+
+function showAlert(){
+
+    const alert=
+        document.getElementById("alert");
+
+    alert.style.display="flex";
+
+    if(navigator.vibrate){
+
+        navigator.vibrate([
+            100,
+            50,
+            100,
+            50,
+            300
+        ]);
+
+    }
+
+    setTimeout(()=>{
+
+        alert.style.display="none";
+
+    },3200);
+
+}
+
+
+/* Show occasional visual alerts */
+
+setInterval(()=>{
+
+    if(Math.random()>.55){
+
+        showAlert();
+
+    }
+
+},18000);
+
+</script>
+
+</body>
+</html>
